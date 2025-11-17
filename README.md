@@ -1,40 +1,214 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/create-next-app).
+# SuperApp - Next.js Super App Clone (Gojek-like)
 
-## Getting Started
+Aplikasi web super app modern yang dibangun dengan Next.js 16, TypeScript, Tailwind CSS, Shadcn UI, Framer Motion, dan Prisma ORM. Terinspirasi dari Gojek dengan fitur transportasi, makanan, paket, e-wallet, dan pembayaran.
 
-First, run the development server:
+## 🚀 Fitur Utama
+
+- **Modern & Responsive UI** - Mobile-first design yang indah seperti Gojek
+- **Authentication** - Login/Register dengan JWT dan refresh tokens
+- **Protected Routes** - Akses halaman yang dilindungi untuk user terautentikasi
+- **Dashboard** - Menampilkan saldo, layanan, promo, dan aktivitas terbaru
+- **Orders Management** - Riwayat pesanan dengan status real-time
+- **Wallet System** - Saldo dompet, riwayat transaksi, top-up, withdraw
+- **User Profile** - Kelola profile, logout, dark mode toggle
+- **Dark Mode** - Support mode gelap untuk kenyamanan mata
+- **Animations** - Smooth transitions dengan Framer Motion
+- **Skeleton Loaders** - Loading states yang profesional
+
+## 📁 Folder Structure
+
+```
+src/
+├── app/
+│   ├── api/auth/
+│   │   ├── login.ts
+│   │   ├── register.ts
+│   │   ├── verify.ts
+│   │   └── refresh.ts
+│   ├── dashboard/
+│   │   ├── page.tsx
+│   │   └── layout.tsx
+│   ├── orders/page.tsx
+│   ├── wallet/page.tsx
+│   ├── profile/page.tsx
+│   ├── login/page.tsx
+│   ├── register/page.tsx
+│   ├── layout.tsx
+│   ├── globals.css
+│   └── page.tsx
+├── components/
+│   ├── ui/
+│   ├── dashboard/
+│   └── navigation/
+├── lib/
+└── utils/
+
+prisma/
+└── schema.prisma
+
+.env
+tsconfig.json
+package.json
+```
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript (Strict mode)
+- **Styling**: Tailwind CSS
+- **UI Components**: Shadcn UI + Lucide React Icons
+- **Animations**: Framer Motion
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Authentication**: JWT + Refresh Tokens
+- **Password**: bcrypt
+
+## 📦 Installation & Setup
+
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database
+- Git
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/yourusername/superapp.git
+cd superapp
+npm install
+```
+
+### 2. Setup Environment Variables
+
+Create `.env` file:
+
+```
+DATABASE_URL="postgresql://user:password@localhost:5432/superapp_db"
+JWT_SECRET="your_jwt_secret_key_here_min_32_chars"
+JWT_REFRESH_SECRET="your_refresh_secret_key_here_min_32_chars"
+```
+
+### 3. Setup Database
+
+```bash
+npx prisma generate
+npx prisma migrate dev --name init
+npx prisma db seed
+```
+
+### 4. Start Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000
 
-You can start editing the page by modifying `app/route.ts`. The page auto-updates as you edit the file.
+## 🔐 Authentication System
 
-## Learn More
+### JWT Tokens
+- **Access Token**: 15 menit expiry
+- **Refresh Token**: 7 hari expiry
 
-To learn more about Next.js, take a look at the following resources:
+### API Endpoints
+- `POST /api/auth/register` - Register user baru
+- `POST /api/auth/login` - Login dengan email & password
+- `POST /api/auth/verify` - Verify token
+- `POST /api/auth/refresh` - Refresh access token
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📱 Pages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Public
+- `/` - Landing page
+- `/login` - Login form
+- `/register` - Register form
 
-## Deploy on Vercel
+### Protected (Login Required)
+- `/dashboard` - Main dashboard
+- `/orders` - Order history
+- `/wallet` - E-wallet & transactions
+- `/profile` - User profile
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🎨 Styling
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Colors**: Blue (#2563eb), Cyan (#06b6d4)
+- **Dark Mode**: Full support dengan `dark:` classes
+- **Responsive**: Mobile-first design (sm/md/lg breakpoints)
 
-## API Routes
+## 🗄️ Database Schema
 
-This directory contains example API routes for the headless API app.
+```prisma
+model User {
+  id       String  @id @default(uuid())
+  name     String
+  email    String  @unique
+  password String
+  balance  Float   @default(0)
+  orders   Order[]
+}
 
-For more details, see [route.js file convention](https://nextjs.org/docs/app/api-reference/file-conventions/route).
+model Service {
+  id       String  @id @default(uuid())
+  name     String
+  icon     String
+  orders   Order[]
+}
+
+model Order {
+  id        String  @id @default(uuid())
+  userId    String
+  serviceId String
+  status    String
+  amount    Float
+}
+```
+
+## 🚀 Build & Deploy
+
+### Build
+```bash
+npm run build
+npm start
+```
+
+### Deploy to Vercel
+```bash
+npm i -g vercel
+vercel
+```
+
+## 🐛 Troubleshooting
+
+**Hydration Error**: Already fixed in RecentActivity component with useEffect
+**Module Not Found**: Restart dev server and delete `.next` folder
+**DB Connection**: Check DATABASE_URL and ensure PostgreSQL is running
+**Token Expired**: Auto-refresh or redirect to login
+
+## 💡 Best Practices
+
+✅ TypeScript strict mode
+✅ Mobile-first responsive design
+✅ Framer Motion animations
+✅ Secure password hashing (bcrypt)
+✅ JWT token management
+✅ Protected routes
+✅ Loading states with skeletons
+✅ Dark mode support
+
+## 📚 Useful Links
+
+- [Next.js Docs](https://nextjs.org/docs)
+- [TypeScript](https://www.typescriptlang.org/docs/)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Framer Motion](https://www.framer.com/motion/)
+- [Prisma](https://www.prisma.io/docs/)
+
+## 📄 License
+
+MIT License - Free for personal and commercial use
+
+---
+
+**Built with ❤️ using Next.js, React, TypeScript & Tailwind CSS**
+
+Happy Coding! 🚀
